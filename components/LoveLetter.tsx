@@ -5,17 +5,13 @@ interface LoveLetterProps {
   onNext: () => void;
 }
 
-const FULL_LETTER = `My Dearest Yuvika,
+const FULL_LETTER = `I’ve been meaning to tell you something that’s been on my mind for days now. Being with you has honestly become my favorite part of every day. Your smile, your voice, and the way you care about me make life feel lighter and happier.
 
-From the moment you came into my life, everything became brighter. The way you laugh, the way your eyes sparkle when you're happy, and even the way you scrunch your nose when you're thinking hard... it's all perfect to me.
+You’re not just my girlfriend. You’re my comfort, my safe place, and my favorite person to talk to. Even the simplest moments feel special when I’m with you.
 
-I never knew what love truly meant until I met you. You are my best friend, my confidant, and my greatest adventure.
+So I wanted to ask you something straight from my heart.
 
-Every day with you is a gift I cherish. I simply cannot imagine my world without you in it.
-
-Yours forever,
-Shawn
-`;
+Will you be my Valentine this year? I would love to spend that day with you and make more beautiful memories together.`;
 
 export const LoveLetter: React.FC<LoveLetterProps> = ({ onNext }) => {
   const [displayedText, setDisplayedText] = useState('');

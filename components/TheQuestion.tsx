@@ -1,33 +1,83 @@
-import React, { useState, useRef } from 'react';
-import { Heart, Sparkles, Ghost, Smile } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Heart, Sparkles } from 'lucide-react';
 
 export const TheQuestion: React.FC = () => {
   const [accepted, setAccepted] = useState(false);
-  const [noButtonStyle, setNoButtonStyle] = useState<React.CSSProperties>({});
   const [attempts, setAttempts] = useState(0);
+  
+  // Refs for direct DOM manipulation for smooth performance
   const containerRef = useRef<HTMLDivElement>(null);
+  const noButtonRef = useRef<HTMLButtonElement>(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const lastAttemptTime = useRef(0);
 
-  const handleNoInteraction = () => {
+  useEffect(() => {
     if (accepted) return;
-    
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!noButtonRef.current || !containerRef.current) return;
+
+      const rect = noButtonRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const dx = e.clientX - centerX;
+      const dy = e.clientY - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const threshold = 150; // Activation radius
+
+      if (distance < threshold) {
+        // Increment attempts (throttled to max once per 500ms)
+        const now = Date.now();
+        if (now - lastAttemptTime.current > 500) {
+          setAttempts(prev => prev + 1);
+          lastAttemptTime.current = now;
+        }
+
+        // Calculate direction vector from Mouse to Button Center
+        // We want to move along the vector (Center - Mouse) which is (-dx, -dy)
+        const angle = Math.atan2(dy, dx);
+        
+        // Move distance depends on how close the mouse is (closer = faster repel)
+        const repelForce = (threshold - distance) * 0.5;
+        
+        const moveX = -Math.cos(angle) * repelForce;
+        const moveY = -Math.sin(angle) * repelForce;
+
+        offsetRef.current.x += moveX;
+        offsetRef.current.y += moveY;
+
+        // Constrain movement to keep it reachable eventually or just annoyingly hard?
+        // Let's constrain it within a reasonable box so it doesn't disappear forever
+        const limit = 200;
+        offsetRef.current.x = Math.max(Math.min(offsetRef.current.x, limit), -limit);
+        offsetRef.current.y = Math.max(Math.min(offsetRef.current.y, limit), -limit);
+
+        noButtonRef.current.style.transform = `translate(${offsetRef.current.x}px, ${offsetRef.current.y}px)`;
+        // Add smooth transition for transform only
+        noButtonRef.current.style.transition = 'transform 0.1s ease-out'; 
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [accepted]);
+
+  const handleMobileInteraction = (e: React.TouchEvent) => {
+    if (accepted) return;
+    e.preventDefault(); // Prevent click
     setAttempts(prev => prev + 1);
     
-    if (!containerRef.current) return;
+    // Simple random jump for touch devices
+    const limit = 150;
+    const randomX = (Math.random() - 0.5) * limit * 2;
+    const randomY = (Math.random() - 0.5) * limit * 2;
     
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const maxWidth = containerRect.width - 140; // Keep roughly inside container
-    const maxHeight = 300; // Limit vertical movement range
-
-    const randomX = Math.random() * maxWidth;
-    const randomY = Math.random() * maxHeight;
-
-    setNoButtonStyle({
-      position: 'absolute',
-      left: `${randomX}px`,
-      top: `${randomY}px`,
-      transition: 'all 0.2s ease-out',
-      zIndex: 20
-    });
+    offsetRef.current = { x: randomX, y: randomY };
+    if (noButtonRef.current) {
+        noButtonRef.current.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    }
   };
 
   const handleYes = () => {
@@ -94,20 +144,19 @@ export const TheQuestion: React.FC = () => {
             </button>
           </div>
 
-          {/* NO Button - Runs away */}
+          {/* NO Button - Moves away magnetically */}
           <button
-            onMouseEnter={handleNoInteraction}
-            onTouchStart={handleNoInteraction}
-            style={noButtonStyle}
-            className="px-10 py-5 bg-gray-200 text-gray-600 text-2xl font-semibold rounded-full hover:bg-gray-300 transition-colors cursor-pointer flex items-center gap-2"
+            ref={noButtonRef}
+            onTouchStart={handleMobileInteraction}
+            className="px-10 py-5 bg-gray-200 text-gray-600 text-2xl font-semibold rounded-full hover:bg-gray-300 transition-colors cursor-pointer flex items-center gap-2 relative z-20"
           >
-            NO <Ghost className="w-6 h-6" />
+            NO
           </button>
         </div>
 
         {attempts > 2 && (
           <p className="text-sm text-gray-500 italic animate-fade-in mt-8 flex items-center justify-center gap-2">
-            (You know you can't click no... <Smile className="w-4 h-4" />)
+            (You know you can't click no...)
           </p>
         )}
       </div>

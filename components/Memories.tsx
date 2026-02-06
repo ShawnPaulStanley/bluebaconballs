@@ -3,10 +3,10 @@ import { Memory } from '../types';
 
 // Placeholder data - user can replace these URLs
 const MEMORIES_DATA: Memory[] = [
-  { id: 1, imageUrl: 'https://picsum.photos/400/500?random=1', caption: 'Our first date ☕', rotation: -3 },
-  { id: 2, imageUrl: 'https://picsum.photos/400/500?random=2', caption: 'That sunny day at the park ☀️', rotation: 2 },
-  { id: 3, imageUrl: 'https://picsum.photos/400/500?random=3', caption: 'Your beautiful smile 😊', rotation: -2 },
-  { id: 4, imageUrl: 'https://picsum.photos/400/500?random=4', caption: 'Always making me laugh 😂', rotation: 4 },
+  { id: 1, imageUrl: 'https://picsum.photos/400/500?random=1', caption: 'Our first date', rotation: -3 },
+  { id: 2, imageUrl: 'https://picsum.photos/400/500?random=2', caption: 'That sunny day at the park', rotation: 2 },
+  { id: 3, imageUrl: 'https://picsum.photos/400/500?random=3', caption: 'Your beautiful smile', rotation: -2 },
+  { id: 4, imageUrl: 'https://picsum.photos/400/500?random=4', caption: 'Always making me laugh', rotation: 4 },
 ];
 
 export const Memories: React.FC = () => {
