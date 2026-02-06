@@ -138,7 +138,7 @@ export const TheQuestion: React.FC = () => {
           <div style={{ transform: `scale(${1 + attempts * 0.1})`, transition: 'transform 0.2s' }} className="z-30 origin-center">
             <button
               onClick={handleYes}
-              className="px-12 py-6 bg-gradient-to-r from-red-500 to-pink-600 text-white text-3xl font-bold rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover-pulse-scale flex items-center gap-3 ring-2 ring-red-300 ring-offset-2"
+              className="px-12 py-6 bg-gradient-to-r from-red-500 to-pink-600 text-white text-3xl font-bold rounded-full shadow-lg hover:shadow-2xl hover:brightness-110 transition-shadow transition-colors duration-300 hover-pulse-scale flex items-center gap-3 ring-2 ring-red-300 ring-offset-2"
             >
               YES <Sparkles className="w-8 h-8 fill-yellow-200 text-yellow-100" />
             </button>
